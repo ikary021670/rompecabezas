@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rompecabezas</title>
   
-  <link rel="icon" type="image/png" href="./img/favicon.png">
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#007bff">
@@ -17,7 +16,7 @@
 </head>
 <body>
 
-  <h1>Rompecabezas</h1>
+  <h1>Rompecabezas Drag & Drop</h1>
 
   <div class="controls">
     <button id="btn-shuffle">Reiniciar / Mezclar</button>
@@ -27,7 +26,22 @@
 
   <div class="info">Movimientos: <span id="moves">0</span></div>
 
-  <div id="board"></div>
+  <div class="game-container">
+    <!-- Panel lateral con las fichas desordenadas -->
+    <div class="sidebar">
+      <h3>Piezas</h3>
+      <div id="pieces-container"></div>
+      
+      <!-- Miniatura de vista previa -->
+      <div class="preview-box">
+        <p>Vista previa:</p>
+        <img id="preview-img" src="" alt="Guía">
+      </div>
+    </div>
+
+    <!-- Tablero donde se sueltan las piezas -->
+    <div id="board"></div>
+  </div>
 
   <div id="win-message">🎉 ¡Felicidades! ¡Completaste el rompecabezas!</div>
 

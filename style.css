@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -23,8 +24,6 @@ h1 {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 button {
@@ -49,6 +48,47 @@ button:hover {
   margin-bottom: 15px;
 }
 
+/* Contenedor principal responsive */
+.game-container {
+  display: flex;
+  gap: 25px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Barra Lateral de Piezas */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 200px;
+}
+
+.sidebar h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+#pieces-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  min-height: 180px;
+  padding: 10px;
+  background: #f0f0f0;
+  border: 2px dashed #ccc;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* Tablero Principal */
 #board {
   width: 320px;
   height: 320px;
@@ -56,29 +96,72 @@ button:hover {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 2px;
-  background-color: #ccc;
+  background-color: #ddd;
   border: 4px solid #333;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.tile {
+.drop-zone {
   width: 100%;
   height: 100%;
-  background-size: 320px 320px;
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.2s ease;
+  background: #e9ecef;
+  border: 1px dashed #b0b0b0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.empty {
-  background: #e0e0e0 !important;
-  cursor: default;
+.drop-zone.hovered {
+  background: #d0e1fd;
+  border-color: #007bff;
+}
+
+/* Estilos de las piezas arrastrales */
+.tile {
+  width: 100px;
+  height: 100px;
+  background-size: 320px 320px;
+  cursor: grab;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#board .tile {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: grab;
+}
+
+.tile:active {
+  cursor: grabbing;
+}
+
+/* Miniatura de Vista Previa */
+.preview-box {
+  text-align: center;
+  width: 100%;
+}
+
+.preview-box p {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+#preview-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 2px solid #333;
+  border-radius: 4px;
 }
 
 #win-message {
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 18px;
   font-weight: bold;
   color: #28a745;

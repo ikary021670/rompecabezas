@@ -1,90 +1,128 @@
 const BOARD_SIZE = 3;
-let tiles = [];
+const TOTAL_TILES = BOARD_SIZE * BOARD_SIZE;
 let moves = 0;
 let imageUrl = 'https://picsum.photos/320/320';
 
 const board = document.getElementById('board');
+const piecesContainer = document.getElementById('pieces-container');
 const movesCounter = document.getElementById('moves');
 const winMessage = document.getElementById('win-message');
+const previewImg = document.getElementById('preview-img');
 const btnShuffle = document.getElementById('btn-shuffle');
 const btnUpload = document.getElementById('btn-upload');
 const imgInput = document.getElementById('img-input');
 
-// Event Listeners
-btnShuffle.addEventListener('click', () => shuffleBoard());
+btnShuffle.addEventListener('click', initGame);
 btnUpload.addEventListener('click', () => imgInput.click());
 imgInput.addEventListener('change', loadCustomImage);
 
-function initBoard() {
-  tiles = Array.from({ length: BOARD_SIZE * BOARD_SIZE }, (_, i) => i);
+function initGame() {
   moves = 0;
   movesCounter.textContent = moves;
   winMessage.style.display = 'none';
-  shuffleBoard();
+  previewImg.src = imageUrl;
+
+  buildBoardZones();
+  buildPieces();
 }
 
-function renderBoard() {
+// 1. Crear las 9 celdas receptoras en el tablero
+function buildBoardZones() {
   board.innerHTML = '';
-  tiles.forEach((tileValue, index) => {
+  for (let i = 0; i < TOTAL_TILES; i++) {
+    const zone = document.createElement('div');
+    zone.classList.add('drop-zone');
+    zone.dataset.index = i;
+
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('dragenter', e => {
+      e.preventDefault();
+      zone.classList.add('hovered');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('hovered'));
+    zone.addEventListener('drop', handleDrop);
+
+    board.appendChild(zone);
+  }
+}
+
+// 2. Crear las piezas y mezclarlas en la barra lateral
+function buildPieces() {
+  piecesContainer.innerHTML = '';
+  const pieceIndexes = Array.from({ length: TOTAL_TILES }, (_, i) => i);
+  
+  // Mezclar array
+  pieceIndexes.sort(() => Math.random() - 0.5);
+
+  pieceIndexes.forEach(id => {
     const tile = document.createElement('div');
     tile.classList.add('tile');
+    tile.draggable = true;
+    tile.dataset.id = id;
 
-    if (tileValue === 8) {
-      tile.classList.add('empty');
-    } else {
-      tile.style.backgroundImage = `url('${imageUrl}')`;
-      const row = Math.floor(tileValue / BOARD_SIZE);
-      const col = tileValue % BOARD_SIZE;
-      tile.style.backgroundPosition = `-${col * 106.66}px -${row * 106.66}px`;
-    }
+    // Calcular recorte de fondo según la pieza
+    const row = Math.floor(id / BOARD_SIZE);
+    const col = id % BOARD_SIZE;
+    tile.style.backgroundImage = `url('${imageUrl}')`;
+    tile.style.backgroundPosition = `-${col * 106.66}px -${row * 106.66}px`;
 
-    tile.addEventListener('click', () => moveTile(index));
-    board.appendChild(tile);
+    tile.addEventListener('dragstart', handleDragStart);
+    piecesContainer.appendChild(tile);
   });
 }
 
-function moveTile(index) {
-  const emptyIndex = tiles.indexOf(8);
-  const validMoves = getValidMoves(emptyIndex);
+let draggedTile = null;
 
-  if (validMoves.includes(index)) {
-    [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+function handleDragStart(e) {
+  draggedTile = e.target;
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  const zone = e.currentTarget;
+  zone.classList.remove('hovered');
+
+  // Si la celda ya tiene una pieza, intercambiar o no permitir
+  if (zone.children.length === 0) {
+    zone.appendChild(draggedTile);
     moves++;
     movesCounter.textContent = moves;
-    renderBoard();
+    checkWin();
+  } else {
+    // Intercambia la pieza existente con la zona de origen de la nueva
+    const existingTile = zone.children[0];
+    const parentOfDragged = draggedTile.parentElement;
+
+    zone.appendChild(draggedTile);
+    parentOfDragged.appendChild(existingTile);
+    
+    moves++;
+    movesCounter.textContent = moves;
     checkWin();
   }
 }
 
-function getValidMoves(emptyIndex) {
-  const row = Math.floor(emptyIndex / BOARD_SIZE);
-  const col = emptyIndex % BOARD_SIZE;
-  const valid = [];
-
-  if (row > 0) valid.push(emptyIndex - BOARD_SIZE);
-  if (row < BOARD_SIZE - 1) valid.push(emptyIndex + BOARD_SIZE);
-  if (col > 0) valid.push(emptyIndex - 1);
-  if (col < BOARD_SIZE - 1) valid.push(emptyIndex + 1);
-
-  return valid;
-}
-
-function shuffleBoard() {
-  for (let i = 0; i < 100; i++) {
-    const emptyIndex = tiles.indexOf(8);
-    const validMoves = getValidMoves(emptyIndex);
-    const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-    [tiles[randomMove], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[randomMove]];
+// Permitir regresar las piezas a la barra lateral si se arrastran de vuelta
+piecesContainer.addEventListener('dragover', e => e.preventDefault());
+piecesContainer.addEventListener('drop', e => {
+  e.preventDefault();
+  if (draggedTile) {
+    piecesContainer.appendChild(draggedTile);
   }
-  moves = 0;
-  movesCounter.textContent = moves;
-  winMessage.style.display = 'none';
-  renderBoard();
-}
+});
 
 function checkWin() {
-  const isWon = tiles.every((val, i) => val === i);
-  if (isWon) {
+  const zones = document.querySelectorAll('.drop-zone');
+  let correctCount = 0;
+
+  zones.forEach(zone => {
+    const tile = zone.children[0];
+    if (tile && parseInt(tile.dataset.id) === parseInt(zone.dataset.index)) {
+      correctCount++;
+    }
+  });
+
+  if (correctCount === TOTAL_TILES) {
     winMessage.style.display = 'block';
   }
 }
@@ -95,14 +133,14 @@ function loadCustomImage(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
       imageUrl = e.target.result;
-      initBoard();
+      initGame();
     };
     reader.readAsDataURL(file);
   }
 }
 
 // Inicializar Juego
-initBoard();
+initGame();
 
 // Registro del Service Worker
 if ('serviceWorker' in navigator) {
