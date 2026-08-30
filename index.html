@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Rompecabezas</title>
   
   <link rel="stylesheet" href="style.css">
@@ -16,32 +16,31 @@
 </head>
 <body>
 
-  <h1>Rompecabezas Drag & Drop</h1>
+  <header>
+    <h1>Rompecabezas</h1>
+    <div class="controls">
+      <button id="btn-shuffle">Reiniciar</button>
+      <button id="btn-upload">Cargar Imagen</button>
+      <input type="file" id="img-input" accept="image/*" style="display: none;">
+    </div>
+    <div class="info">Movimientos: <span id="moves">0</span></div>
+  </header>
 
-  <div class="controls">
-    <button id="btn-shuffle">Reiniciar / Mezclar</button>
-    <button id="btn-upload">Cargar Imagen</button>
-    <input type="file" id="img-input" accept="image/*" style="display: none;">
-  </div>
-
-  <div class="info">Movimientos: <span id="moves">0</span></div>
-
-  <div class="game-container">
-    <!-- Panel lateral con las fichas desordenadas -->
-    <div class="sidebar">
-      <h3>Piezas</h3>
-      <div id="pieces-container"></div>
-      
-      <!-- Miniatura de vista previa -->
-      <div class="preview-box">
-        <p>Vista previa:</p>
-        <img id="preview-img" src="" alt="Guía">
-      </div>
+  <main class="game-container">
+    <!-- Vista previa reducida arriba -->
+    <div class="preview-container">
+      <span>Guía:</span>
+      <img id="preview-img" src="" alt="Vista previa">
     </div>
 
-    <!-- Tablero donde se sueltan las piezas -->
+    <!-- Tablero central -->
     <div id="board"></div>
-  </div>
+
+    <!-- Banner horizontal de piezas (Scroll horizontal) -->
+    <div class="pieces-banner">
+      <div id="pieces-container"></div>
+    </div>
+  </main>
 
   <div id="win-message">🎉 ¡Felicidades! ¡Completaste el rompecabezas!</div>
 

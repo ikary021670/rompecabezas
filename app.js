@@ -1,7 +1,7 @@
 const BOARD_SIZE = 3;
 const TOTAL_TILES = BOARD_SIZE * BOARD_SIZE;
 let moves = 0;
-let imageUrl = 'https://picsum.photos/320/320';
+let imageUrl = 'https://picsum.photos/300/300';
 
 const board = document.getElementById('board');
 const piecesContainer = document.getElementById('pieces-container');
@@ -26,7 +26,6 @@ function initGame() {
   buildPieces();
 }
 
-// 1. Crear las 9 celdas receptoras en el tablero
 function buildBoardZones() {
   board.innerHTML = '';
   for (let i = 0; i < TOTAL_TILES; i++) {
@@ -34,6 +33,7 @@ function buildBoardZones() {
     zone.classList.add('drop-zone');
     zone.dataset.index = i;
 
+    // Eventos Mouse Drag & Drop
     zone.addEventListener('dragover', e => e.preventDefault());
     zone.addEventListener('dragenter', e => {
       e.preventDefault();
@@ -46,12 +46,9 @@ function buildBoardZones() {
   }
 }
 
-// 2. Crear las piezas y mezclarlas en la barra lateral
 function buildPieces() {
   piecesContainer.innerHTML = '';
   const pieceIndexes = Array.from({ length: TOTAL_TILES }, (_, i) => i);
-  
-  // Mezclar array
   pieceIndexes.sort(() => Math.random() - 0.5);
 
   pieceIndexes.forEach(id => {
@@ -60,19 +57,26 @@ function buildPieces() {
     tile.draggable = true;
     tile.dataset.id = id;
 
-    // Calcular recorte de fondo según la pieza
     const row = Math.floor(id / BOARD_SIZE);
     const col = id % BOARD_SIZE;
     tile.style.backgroundImage = `url('${imageUrl}')`;
-    tile.style.backgroundPosition = `-${col * 106.66}px -${row * 106.66}px`;
+    tile.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
 
+    // Soporte para Mouse
     tile.addEventListener('dragstart', handleDragStart);
+
+    // Soporte para Pantallas Táctiles (Touch)
+    tile.addEventListener('touchstart', handleTouchStart, { passive: false });
+    tile.addEventListener('touchmove', handleTouchMove, { passive: false });
+    tile.addEventListener('touchend', handleTouchEnd);
+
     piecesContainer.appendChild(tile);
   });
 }
 
 let draggedTile = null;
 
+// --- LÓGICA MOUSE ---
 function handleDragStart(e) {
   draggedTile = e.target;
 }
@@ -81,28 +85,84 @@ function handleDrop(e) {
   e.preventDefault();
   const zone = e.currentTarget;
   zone.classList.remove('hovered');
-
-  // Si la celda ya tiene una pieza, intercambiar o no permitir
-  if (zone.children.length === 0) {
-    zone.appendChild(draggedTile);
-    moves++;
-    movesCounter.textContent = moves;
-    checkWin();
-  } else {
-    // Intercambia la pieza existente con la zona de origen de la nueva
-    const existingTile = zone.children[0];
-    const parentOfDragged = draggedTile.parentElement;
-
-    zone.appendChild(draggedTile);
-    parentOfDragged.appendChild(existingTile);
-    
-    moves++;
-    movesCounter.textContent = moves;
-    checkWin();
-  }
+  placeTileInZone(zone, draggedTile);
 }
 
-// Permitir regresar las piezas a la barra lateral si se arrastran de vuelta
+// --- LÓGICA TOUCH (MÓVIL) ---
+let touchClone = null;
+
+function handleTouchStart(e) {
+  draggedTile = e.currentTarget;
+  draggedTile.classList.add('dragging');
+
+  // Crear clon visual que sigue el dedo
+  touchClone = draggedTile.cloneNode(true);
+  touchClone.style.position = 'fixed';
+  touchClone.style.zIndex = '1000';
+  touchClone.style.pointerEvents = 'none';
+  touchClone.style.width = '80px';
+  touchClone.style.height = '80px';
+  
+  const touch = e.touches[0];
+  touchClone.style.left = `${touch.clientX - 40}px`;
+  touchClone.style.top = `${touch.clientY - 40}px`;
+
+  document.body.appendChild(touchClone);
+}
+
+function handleTouchMove(e) {
+  if (!touchClone) return;
+  e.preventDefault(); // Previene el scroll del navegador al arrastrar una pieza
+
+  const touch = e.touches[0];
+  touchClone.style.left = `${touch.clientX - 40}px`;
+  touchClone.style.top = `${touch.clientY - 40}px`;
+}
+
+function handleTouchEnd(e) {
+  if (!draggedTile) return;
+  draggedTile.classList.remove('dragging');
+
+  if (touchClone) {
+    touchClone.remove();
+    touchClone = null;
+  }
+
+  const touch = e.changedTouches[0];
+  // Detectar elemento debajo del punto donde se soltó el dedo
+  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (targetElement) {
+    const dropZone = targetElement.closest('.drop-zone');
+    const targetBanner = targetElement.closest('.pieces-banner');
+
+    if (dropZone) {
+      placeTileInZone(dropZone, draggedTile);
+    } else if (targetBanner || targetElement.id === 'pieces-container') {
+      piecesContainer.appendChild(draggedTile);
+    }
+  }
+
+  draggedTile = null;
+}
+
+// Colocar o intercambiar pieza
+function placeTileInZone(zone, tile) {
+  if (zone.children.length === 0) {
+    zone.appendChild(tile);
+  } else {
+    const existingTile = zone.children[0];
+    const originParent = tile.parentElement;
+
+    zone.appendChild(tile);
+    originParent.appendChild(existingTile);
+  }
+  moves++;
+  movesCounter.textContent = moves;
+  checkWin();
+}
+
+// Regresar pieza al banner con mouse drag
 piecesContainer.addEventListener('dragover', e => e.preventDefault());
 piecesContainer.addEventListener('drop', e => {
   e.preventDefault();
