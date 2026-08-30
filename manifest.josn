@@ -1,23 +1,15 @@
 {
-  "name": "Rompecabezas Personalizado",
   "short_name": "Rompecabezas",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#f4f4f9",
-  "theme_color": "#007bff",
-  "orientation": "portrait",
+  "name": "Juego de Rompecabezas",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3068/3068327.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/3068/3068327.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     }
-  ]
+  ],
+  "start_url": "./",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "display": "standalone"
 }
