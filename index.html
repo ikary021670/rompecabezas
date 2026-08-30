@@ -16,11 +16,17 @@
 </head>
 <body>
 
-  <!-- Barra de control compacta superior (Todo en 1 fila) -->
   <header class="top-bar">
     <div class="guide-box">
-      <img id="preview-img" src="" alt="Guía" title="Guía de la imagen">
+      <!-- 1 y 2. Imagen guía más grande con clic para Zoom -->
+      <img id="preview-img" src="" alt="Guía" title="Toca para ampliar">
     </div>
+
+    <select id="difficulty-select" title="Seleccionar dificultad">
+      <option value="2">Fácil (4)</option>
+      <option value="3" selected>Medio (9)</option>
+      <option value="4">Difícil (16)</option>
+    </select>
 
     <div class="moves-badge">
       <span>Movs:</span> <strong id="moves">0</strong>
@@ -34,16 +40,20 @@
   </header>
 
   <main class="game-container">
-    <!-- Tablero principal -->
     <div id="board"></div>
 
-    <!-- Banner horizontal de piezas desordenadas -->
     <div class="pieces-banner">
       <div id="pieces-container"></div>
     </div>
   </main>
 
-  <div id="win-message">🎉 ¡Felicidades! ¡Lo completaste!</div>
+  <!-- 4. Contenedor dinámico de estado (Éxito / Error) -->
+  <div id="status-message" class="status-badge"></div>
+
+  <!-- 2. Modal de Zoom para la Imagen Guía -->
+  <div id="image-modal" class="modal-overlay">
+    <img id="modal-img" class="modal-content" src="" alt="Imagen ampliada">
+  </div>
 
   <script src="app.js"></script>
 </body>
