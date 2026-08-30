@@ -2,6 +2,7 @@ let boardSize = 3;
 let totalTiles = boardSize * boardSize;
 let moves = 0;
 let imageUrl = 'https://picsum.photos/320/320';
+let showNumbers = false;
 
 const board = document.getElementById('board');
 const piecesContainer = document.getElementById('pieces-container');
@@ -12,6 +13,7 @@ const btnShuffle = document.getElementById('btn-shuffle');
 const btnUpload = document.getElementById('btn-upload');
 const imgInput = document.getElementById('img-input');
 const difficultySelect = document.getElementById('difficulty-select');
+const btnToggleNumbers = document.getElementById('btn-toggle-numbers');
 
 // Modal Elements
 const imageModal = document.getElementById('image-modal');
@@ -26,7 +28,12 @@ difficultySelect.addEventListener('change', (e) => {
   initGame();
 });
 
-// 2. Lógica del Zoom Modal
+btnToggleNumbers.addEventListener('click', () => {
+  showNumbers = !showNumbers;
+  document.body.classList.toggle('hide-numbers', !showNumbers);
+});
+
+// Lógica del Zoom Modal
 previewImg.addEventListener('click', () => {
   modalImg.src = imageUrl;
   imageModal.classList.add('active');
@@ -35,18 +42,6 @@ previewImg.addEventListener('click', () => {
 imageModal.addEventListener('click', () => {
   imageModal.classList.remove('active');
 });
-
-function loadCustomImage(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      imageUrl = e.target.result;
-      initGame();
-    };
-    reader.readAsDataURL(file);
-  }
-}
 
 function initGame() {
   moves = 0;
@@ -101,6 +96,12 @@ function buildPieces() {
     tile.style.backgroundSize = '320px 320px';
     tile.style.backgroundPosition = `-${col * tileSize}px -${row * tileSize}px`;
 
+    // Etiqueta numérica
+    const numTag = document.createElement('span');
+    numTag.classList.add('tile-number');
+    numTag.textContent = parseInt(id) + 1;
+    tile.appendChild(numTag);
+
     // Mouse
     tile.addEventListener('dragstart', handleDragStart);
 
@@ -111,6 +112,8 @@ function buildPieces() {
 
     piecesContainer.appendChild(tile);
   });
+  
+  document.body.classList.toggle('hide-numbers', !showNumbers);
 }
 
 let draggedTile = null;
@@ -127,7 +130,7 @@ function handleDrop(e) {
   placeTileInZone(zone, draggedTile);
 }
 
-// 3. Touch Drag con distinción de scroll horizontal vs arrastre vertical
+// Touch Drag
 let touchClone = null;
 let startX = 0;
 let startY = 0;
@@ -147,13 +150,12 @@ function handleTouchMove(e) {
   const diffX = Math.abs(touch.clientX - startX);
   const diffY = touch.clientY - startY;
 
-  // Si la pieza está en el banner, solo arrastrar si el movimiento es hacia ARRIBA (diffY negativo)
   if (!isDraggingPiece && draggedTile.parentElement.id === 'pieces-container') {
     if (diffY < -10 && Math.abs(diffY) > diffX) {
       isDraggingPiece = true;
       createTouchClone(touch);
     } else {
-      return; // Permite el scroll horizontal normal de la barra
+      return;
     }
   } else if (!isDraggingPiece && draggedTile.parentElement.classList.contains('drop-zone')) {
     isDraggingPiece = true;
@@ -230,21 +232,29 @@ piecesContainer.addEventListener('drop', e => {
   e.preventDefault();
   if (draggedTile) {
     piecesContainer.appendChild(draggedTile);
+    checkBoardStatus();
   }
 });
 
-// 4. Verificación de Tablero: Validar cuando esté lleno (Ganó o Error)
+// Verificación del tablero con marcas visuales inmediatas
 function checkBoardStatus() {
   const zones = document.querySelectorAll('.drop-zone');
   let placedTiles = 0;
   let correctCount = 0;
 
   zones.forEach(zone => {
+    zone.classList.remove('correct', 'incorrect');
     const tile = zone.children[0];
+
     if (tile) {
       placedTiles++;
-      if (parseInt(tile.dataset.id) === parseInt(zone.dataset.index)) {
+      const isCorrect = parseInt(tile.dataset.id) === parseInt(zone.dataset.index);
+      
+      if (isCorrect) {
+        zone.classList.add('correct');
         correctCount++;
+      } else {
+        zone.classList.add('incorrect');
       }
     }
   });
@@ -254,12 +264,24 @@ function checkBoardStatus() {
       statusMessage.textContent = '🎉 ¡Felicidades! Rompecabezas completado correctamente.';
       statusMessage.className = 'status-badge win';
     } else {
-      statusMessage.textContent = '❌ Hay piezas fuera de lugar. ¡Sigue intentándolo!';
+      statusMessage.textContent = '❌ Revisa las casillas marcadas en rojo.';
       statusMessage.className = 'status-badge error';
     }
   } else {
     statusMessage.style.display = 'none';
     statusMessage.className = 'status-badge';
+  }
+}
+
+function loadCustomImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imageUrl = e.target.result;
+      initGame();
+    };
+    reader.readAsDataURL(file);
   }
 }
 
