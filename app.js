@@ -2,7 +2,7 @@ let boardSize = 3;
 let totalTiles = boardSize * boardSize;
 let moves = 0;
 let imageUrl = 'https://picsum.photos/320/320';
-let showNumbers = false;
+let showNumbers = true; // Cambiado a true por defecto
 
 const board = document.getElementById('board');
 const piecesContainer = document.getElementById('pieces-container');
@@ -15,13 +15,13 @@ const imgInput = document.getElementById('img-input');
 const difficultySelect = document.getElementById('difficulty-select');
 const btnToggleNumbers = document.getElementById('btn-toggle-numbers');
 
-// Modal Elements
 const imageModal = document.getElementById('image-modal');
 const modalImg = document.getElementById('modal-img');
 
 if (btnShuffle) btnShuffle.addEventListener('click', initGame);
 if (btnUpload) btnUpload.addEventListener('click', () => imgInput.click());
 if (imgInput) imgInput.addEventListener('change', loadCustomImage);
+
 if (difficultySelect) {
   difficultySelect.addEventListener('change', (e) => {
     boardSize = parseInt(e.target.value);
@@ -33,11 +33,11 @@ if (difficultySelect) {
 if (btnToggleNumbers) {
   btnToggleNumbers.addEventListener('click', () => {
     showNumbers = !showNumbers;
+    btnToggleNumbers.classList.toggle('active', showNumbers);
     document.body.classList.toggle('hide-numbers', !showNumbers);
   });
 }
 
-// Lógica del Zoom Modal
 if (previewImg && imageModal && modalImg) {
   previewImg.addEventListener('click', () => {
     modalImg.src = imageUrl;
@@ -58,6 +58,11 @@ function initGame() {
     statusMessage.textContent = '';
   }
   if (previewImg) previewImg.src = imageUrl;
+
+  if (btnToggleNumbers) {
+    btnToggleNumbers.classList.toggle('active', showNumbers);
+  }
+  document.body.classList.toggle('hide-numbers', !showNumbers);
 
   buildBoardZones();
   buildPieces();
@@ -106,29 +111,22 @@ function buildPieces() {
     tile.style.backgroundSize = '320px 320px';
     tile.style.backgroundPosition = `-${col * tileSize}px -${row * tileSize}px`;
 
-    // Etiqueta numérica
     const numTag = document.createElement('span');
     numTag.classList.add('tile-number');
     numTag.textContent = parseInt(id) + 1;
     tile.appendChild(numTag);
 
-    // Mouse
     tile.addEventListener('dragstart', handleDragStart);
-
-    // Touch
     tile.addEventListener('touchstart', handleTouchStart, { passive: false });
     tile.addEventListener('touchmove', handleTouchMove, { passive: false });
     tile.addEventListener('touchend', handleTouchEnd);
 
     piecesContainer.appendChild(tile);
   });
-  
-  document.body.classList.toggle('hide-numbers', !showNumbers);
 }
 
 let draggedTile = null;
 
-// Mouse Drag
 function handleDragStart(e) {
   draggedTile = e.target;
 }
@@ -140,7 +138,6 @@ function handleDrop(e) {
   placeTileInZone(zone, draggedTile);
 }
 
-// Touch Drag
 let touchClone = null;
 let startX = 0;
 let startY = 0;
@@ -173,7 +170,7 @@ function handleTouchMove(e) {
   }
 
   if (isDraggingPiece && touchClone) {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault(); // Corrección de advertencia TouchMove
     touchClone.style.left = `${touch.clientX - 40}px`;
     touchClone.style.top = `${touch.clientY - 40}px`;
   }
@@ -276,9 +273,11 @@ function checkBoardStatus() {
     if (correctCount === totalTiles) {
       statusMessage.textContent = '🎉 ¡Felicidades! Rompecabezas completado correctamente.';
       statusMessage.className = 'status-badge win';
+      statusMessage.style.display = 'block';
     } else {
       statusMessage.textContent = '❌ Revisa las casillas marcadas en rojo.';
       statusMessage.className = 'status-badge error';
+      statusMessage.style.display = 'block';
     }
   } else {
     statusMessage.style.display = 'none';
