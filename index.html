@@ -1,19 +1,30 @@
-<!-- En la sección <head> de tu index.html -->
-<link rel="icon" type="image/png" href="./img/favicon.png">
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#007bff">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rompecabezas</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#007bff">
 
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Rompecabezas">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Rompecabezas">
+</head>
+<body>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
-        .catch(err => console.error('Error al registrar Service Worker:', err));
-    });
-  }
-</script>
+  <!-- Tu contenido del juego aquí -->
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+          .catch(err => console.error('Error al registrar Service Worker:', err));
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,8 +1,9 @@
-const CACHE_NAME = 'puzzle-v2';
+const CACHE_NAME = 'puzzle-v4';
 const ASSETS = [
-  'index.html',
-  'manifest.json',
-  'sw.js'
+  './',
+  './index.html',
+  './manifest.json',
+  './sw.js'
 ];
 
 self.addEventListener('install', (e) => {
@@ -25,6 +26,10 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
+    caches.match(e.request).then((res) => {
+      return res || fetch(e.request).catch(() => {
+        console.warn('Recurso no encontrado:', e.request.url);
+      });
+    })
   );
 });
