@@ -3,6 +3,14 @@
   "name": "Juego de Rompecabezas",
   "start_url": "./",
   "background_color": "#ffffff",
-  "theme-color": "#007bff",
-  "display": "standalone"
+  "theme_color": "#007bff",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "./img/favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

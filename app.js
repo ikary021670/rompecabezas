@@ -19,43 +19,52 @@ const btnToggleNumbers = document.getElementById('btn-toggle-numbers');
 const imageModal = document.getElementById('image-modal');
 const modalImg = document.getElementById('modal-img');
 
-btnShuffle.addEventListener('click', initGame);
-btnUpload.addEventListener('click', () => imgInput.click());
-imgInput.addEventListener('change', loadCustomImage);
-difficultySelect.addEventListener('change', (e) => {
-  boardSize = parseInt(e.target.value);
-  totalTiles = boardSize * boardSize;
-  initGame();
-});
+if (btnShuffle) btnShuffle.addEventListener('click', initGame);
+if (btnUpload) btnUpload.addEventListener('click', () => imgInput.click());
+if (imgInput) imgInput.addEventListener('change', loadCustomImage);
+if (difficultySelect) {
+  difficultySelect.addEventListener('change', (e) => {
+    boardSize = parseInt(e.target.value);
+    totalTiles = boardSize * boardSize;
+    initGame();
+  });
+}
 
-btnToggleNumbers.addEventListener('click', () => {
-  showNumbers = !showNumbers;
-  document.body.classList.toggle('hide-numbers', !showNumbers);
-});
+if (btnToggleNumbers) {
+  btnToggleNumbers.addEventListener('click', () => {
+    showNumbers = !showNumbers;
+    document.body.classList.toggle('hide-numbers', !showNumbers);
+  });
+}
 
 // Lógica del Zoom Modal
-previewImg.addEventListener('click', () => {
-  modalImg.src = imageUrl;
-  imageModal.classList.add('active');
-});
+if (previewImg && imageModal && modalImg) {
+  previewImg.addEventListener('click', () => {
+    modalImg.src = imageUrl;
+    imageModal.classList.add('active');
+  });
 
-imageModal.addEventListener('click', () => {
-  imageModal.classList.remove('active');
-});
+  imageModal.addEventListener('click', () => {
+    imageModal.classList.remove('active');
+  });
+}
 
 function initGame() {
   moves = 0;
-  movesCounter.textContent = moves;
-  statusMessage.className = 'status-badge';
-  statusMessage.style.display = 'none';
-  statusMessage.textContent = '';
-  previewImg.src = imageUrl;
+  if (movesCounter) movesCounter.textContent = moves;
+  if (statusMessage) {
+    statusMessage.className = 'status-badge';
+    statusMessage.style.display = 'none';
+    statusMessage.textContent = '';
+  }
+  if (previewImg) previewImg.src = imageUrl;
 
   buildBoardZones();
   buildPieces();
 }
 
 function buildBoardZones() {
+  if (!board) return;
   board.innerHTML = '';
   board.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
   board.style.gridTemplateRows = `repeat(${boardSize}, 1fr)`;
@@ -78,6 +87,7 @@ function buildBoardZones() {
 }
 
 function buildPieces() {
+  if (!piecesContainer) return;
   piecesContainer.innerHTML = '';
   const pieceIndexes = Array.from({ length: totalTiles }, (_, i) => i);
   pieceIndexes.sort(() => Math.random() - 0.5);
@@ -223,20 +233,21 @@ function placeTileInZone(zone, tile) {
     originParent.appendChild(existingTile);
   }
   moves++;
-  movesCounter.textContent = moves;
+  if (movesCounter) movesCounter.textContent = moves;
   checkBoardStatus();
 }
 
-piecesContainer.addEventListener('dragover', e => e.preventDefault());
-piecesContainer.addEventListener('drop', e => {
-  e.preventDefault();
-  if (draggedTile) {
-    piecesContainer.appendChild(draggedTile);
-    checkBoardStatus();
-  }
-});
+if (piecesContainer) {
+  piecesContainer.addEventListener('dragover', e => e.preventDefault());
+  piecesContainer.addEventListener('drop', e => {
+    e.preventDefault();
+    if (draggedTile) {
+      piecesContainer.appendChild(draggedTile);
+      checkBoardStatus();
+    }
+  });
+}
 
-// Verificación del tablero con marcas visuales inmediatas
 function checkBoardStatus() {
   const zones = document.querySelectorAll('.drop-zone');
   let placedTiles = 0;
@@ -258,6 +269,8 @@ function checkBoardStatus() {
       }
     }
   });
+
+  if (!statusMessage) return;
 
   if (placedTiles === totalTiles) {
     if (correctCount === totalTiles) {

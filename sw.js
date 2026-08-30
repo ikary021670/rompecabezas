@@ -1,11 +1,12 @@
-const CACHE_NAME = 'puzzle-v5';
+const CACHE_NAME = 'puzzle-v6';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
-  './sw.js'
+  './sw.js',
+  './img/favicon.png'
 ];
 
 self.addEventListener('install', (e) => {

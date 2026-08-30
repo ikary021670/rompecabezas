@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Rompecabezas</title>
   
+  <link rel="icon" type="image/png" href="./img/favicon.png">
+  <link rel="apple-touch-icon" href="./img/favicon.png">
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#007bff">
@@ -16,22 +18,29 @@
 </head>
 <body>
 
-  <!-- Barra de control compacta superior (Todo en 1 fila) -->
+  <!-- Barra de control compacta superior -->
   <header class="top-bar">
     <div class="guide-box">
-      <img id="preview-img" src="" alt="Guía" title="Guía de la imagen">
+      <img id="preview-img" src="" alt="Guía" title="Toca para ampliar">
     </div>
+
+    <!-- Selector de dificultad (Requerido por app.js) -->
+    <select id="difficulty-select" title="Seleccionar dificultad">
+      <option value="2">Fácil (4)</option>
+      <option value="3" selected>Medio (9)</option>
+      <option value="4">Difícil (16)</option>
+    </select>
 
     <div class="moves-badge">
       <span>Movs:</span> <strong id="moves">0</strong>
     </div>
 
-  <div class="actions">
-    <button id="btn-toggle-numbers" title="Mostrar/Ocultar Números" aria-label="Números">🔢</button>
-    <button id="btn-shuffle" title="Reiniciar juego" aria-label="Reiniciar">🔄</button>
-    <button id="btn-upload" title="Cargar nueva imagen" aria-label="Subir Imagen">📁</button>
-    <input type="file" id="img-input" accept="image/*" style="display: none;">
-  </div>
+    <div class="actions">
+      <button id="btn-toggle-numbers" title="Mostrar/Ocultar Números" aria-label="Números">🔢</button>
+      <button id="btn-shuffle" title="Reiniciar juego" aria-label="Reiniciar">🔄</button>
+      <button id="btn-upload" title="Cargar nueva imagen" aria-label="Subir Imagen">📁</button>
+      <input type="file" id="img-input" accept="image/*" style="display: none;">
+    </div>
   </header>
 
   <main class="game-container">
@@ -44,7 +53,13 @@
     </div>
   </main>
 
-  <div id="win-message">🎉 ¡Felicidades! ¡Lo completaste!</div>
+  <!-- Mensaje de estado dinámico (Requerido por app.js) -->
+  <div id="status-message" class="status-badge"></div>
+
+  <!-- Modal de Zoom para la Imagen Guía -->
+  <div id="image-modal" class="modal-overlay">
+    <img id="modal-img" class="modal-content" src="" alt="Imagen ampliada">
+  </div>
 
   <script src="app.js"></script>
 </body>
