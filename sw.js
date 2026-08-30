@@ -1,7 +1,9 @@
-const CACHE_NAME = 'puzzle-v4';
+const CACHE_NAME = 'puzzle-v5';
 const ASSETS = [
   './',
   './index.html',
+  './style.css',
+  './app.js',
   './manifest.json',
   './sw.js'
 ];

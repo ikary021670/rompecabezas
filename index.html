@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rompecabezas</title>
   
+  <link rel="icon" type="image/png" href="./img/favicon.png">
+  <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#007bff">
 
@@ -15,16 +17,20 @@
 </head>
 <body>
 
-  <!-- Tu contenido del juego aquí -->
+  <h1>Rompecabezas</h1>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
-          .catch(err => console.error('Error al registrar Service Worker:', err));
-      });
-    }
-  </script>
+  <div class="controls">
+    <button id="btn-shuffle">Reiniciar / Mezclar</button>
+    <button id="btn-upload">Cargar Imagen</button>
+    <input type="file" id="img-input" accept="image/*" style="display: none;">
+  </div>
+
+  <div class="info">Movimientos: <span id="moves">0</span></div>
+
+  <div id="board"></div>
+
+  <div id="win-message">🎉 ¡Felicidades! ¡Completaste el rompecabezas!</div>
+
+  <script src="app.js"></script>
 </body>
 </html>
