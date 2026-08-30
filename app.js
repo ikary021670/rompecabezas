@@ -1,7 +1,7 @@
 const BOARD_SIZE = 3;
 const TOTAL_TILES = BOARD_SIZE * BOARD_SIZE;
 let moves = 0;
-let imageUrl = 'https://picsum.photos/300/300';
+let imageUrl = 'https://picsum.photos/320/320';
 
 const board = document.getElementById('board');
 const piecesContainer = document.getElementById('pieces-container');
@@ -33,7 +33,6 @@ function buildBoardZones() {
     zone.classList.add('drop-zone');
     zone.dataset.index = i;
 
-    // Eventos Mouse Drag & Drop
     zone.addEventListener('dragover', e => e.preventDefault());
     zone.addEventListener('dragenter', e => {
       e.preventDefault();
@@ -60,12 +59,12 @@ function buildPieces() {
     const row = Math.floor(id / BOARD_SIZE);
     const col = id % BOARD_SIZE;
     tile.style.backgroundImage = `url('${imageUrl}')`;
-    tile.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+    tile.style.backgroundPosition = `-${col * 106.66}px -${row * 106.66}px`;
 
-    // Soporte para Mouse
+    // Eventos Mouse
     tile.addEventListener('dragstart', handleDragStart);
 
-    // Soporte para Pantallas Táctiles (Touch)
+    // Eventos Touch (Móvil)
     tile.addEventListener('touchstart', handleTouchStart, { passive: false });
     tile.addEventListener('touchmove', handleTouchMove, { passive: false });
     tile.addEventListener('touchend', handleTouchEnd);
@@ -76,7 +75,7 @@ function buildPieces() {
 
 let draggedTile = null;
 
-// --- LÓGICA MOUSE ---
+// --- MOUSE ---
 function handleDragStart(e) {
   draggedTile = e.target;
 }
@@ -88,20 +87,20 @@ function handleDrop(e) {
   placeTileInZone(zone, draggedTile);
 }
 
-// --- LÓGICA TOUCH (MÓVIL) ---
+// --- TOUCH ---
 let touchClone = null;
 
 function handleTouchStart(e) {
   draggedTile = e.currentTarget;
   draggedTile.classList.add('dragging');
 
-  // Crear clon visual que sigue el dedo
   touchClone = draggedTile.cloneNode(true);
   touchClone.style.position = 'fixed';
   touchClone.style.zIndex = '1000';
   touchClone.style.pointerEvents = 'none';
   touchClone.style.width = '80px';
   touchClone.style.height = '80px';
+  touchClone.style.opacity = '0.9';
   
   const touch = e.touches[0];
   touchClone.style.left = `${touch.clientX - 40}px`;
@@ -112,7 +111,7 @@ function handleTouchStart(e) {
 
 function handleTouchMove(e) {
   if (!touchClone) return;
-  e.preventDefault(); // Previene el scroll del navegador al arrastrar una pieza
+  e.preventDefault();
 
   const touch = e.touches[0];
   touchClone.style.left = `${touch.clientX - 40}px`;
@@ -129,7 +128,6 @@ function handleTouchEnd(e) {
   }
 
   const touch = e.changedTouches[0];
-  // Detectar elemento debajo del punto donde se soltó el dedo
   const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
 
   if (targetElement) {
@@ -146,7 +144,6 @@ function handleTouchEnd(e) {
   draggedTile = null;
 }
 
-// Colocar o intercambiar pieza
 function placeTileInZone(zone, tile) {
   if (zone.children.length === 0) {
     zone.appendChild(tile);
@@ -162,7 +159,6 @@ function placeTileInZone(zone, tile) {
   checkWin();
 }
 
-// Regresar pieza al banner con mouse drag
 piecesContainer.addEventListener('dragover', e => e.preventDefault());
 piecesContainer.addEventListener('drop', e => {
   e.preventDefault();

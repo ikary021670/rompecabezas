@@ -16,33 +16,34 @@
 </head>
 <body>
 
-  <header>
-    <h1>Rompecabezas</h1>
-    <div class="controls">
-      <button id="btn-shuffle">Reiniciar</button>
-      <button id="btn-upload">Cargar Imagen</button>
+  <!-- Barra de control compacta superior (Todo en 1 fila) -->
+  <header class="top-bar">
+    <div class="guide-box">
+      <img id="preview-img" src="" alt="Guía" title="Guía de la imagen">
+    </div>
+
+    <div class="moves-badge">
+      <span>Movs:</span> <strong id="moves">0</strong>
+    </div>
+
+    <div class="actions">
+      <button id="btn-shuffle" title="Reiniciar juego" aria-label="Reiniciar">🔄</button>
+      <button id="btn-upload" title="Cargar nueva imagen" aria-label="Subir Imagen">📁</button>
       <input type="file" id="img-input" accept="image/*" style="display: none;">
     </div>
-    <div class="info">Movimientos: <span id="moves">0</span></div>
   </header>
 
   <main class="game-container">
-    <!-- Vista previa reducida arriba -->
-    <div class="preview-container">
-      <span>Guía:</span>
-      <img id="preview-img" src="" alt="Vista previa">
-    </div>
-
-    <!-- Tablero central -->
+    <!-- Tablero principal -->
     <div id="board"></div>
 
-    <!-- Banner horizontal de piezas (Scroll horizontal) -->
+    <!-- Banner horizontal de piezas desordenadas -->
     <div class="pieces-banner">
       <div id="pieces-container"></div>
     </div>
   </main>
 
-  <div id="win-message">🎉 ¡Felicidades! ¡Completaste el rompecabezas!</div>
+  <div id="win-message">🎉 ¡Felicidades! ¡Lo completaste!</div>
 
   <script src="app.js"></script>
 </body>
