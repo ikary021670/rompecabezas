@@ -36,6 +36,18 @@ imageModal.addEventListener('click', () => {
   imageModal.classList.remove('active');
 });
 
+function loadCustomImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imageUrl = e.target.result;
+      initGame();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
 function initGame() {
   moves = 0;
   movesCounter.textContent = moves;
